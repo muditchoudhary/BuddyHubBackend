@@ -1,1 +1,1 @@
-# BuddyHubBackend
+# Buddy Hub Backend
