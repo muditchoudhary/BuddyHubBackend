@@ -1,6 +1,10 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import passport from 'passport';
+
+import { initializePassport } from './configs/passport';
+import authRoutes from './routes/auth.routes';
 
 dotenv.config();
 
@@ -10,9 +14,22 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
-  res.send('Hello world sadasd');
+initializePassport(passport);
+app.use(passport.initialize());
+
+app.get('/test', (req: Request, res: Response) => {
+  res.send('Working fine');
+});
+
+app.use('/auth', authRoutes);
+
+app.get('/protected', passport.authenticate('jwt', { session: false }), (req, res) => {
+  res.status(200).json({
+    success: true,
+    msg: 'You are successfully authenticated to this route!',
+  });
 });
 
 app.listen(PORT, () => {
