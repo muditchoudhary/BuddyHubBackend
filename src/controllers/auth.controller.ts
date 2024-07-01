@@ -5,18 +5,18 @@ import dotenv from 'dotenv';
 import { INTERNAL_SERVER_ERROR } from '../constants/globalStrings';
 import prisma from '../configs/prisma';
 import { issueJWT } from '../lib/utils';
+import { UserJWT } from '../types/users';
 
 dotenv.config();
 
 const AuthController = () => {
   const register = async (req: Request, res: Response) => {
     try {
-      const firstName = req.body.firstName;
-      const lastName = req.body.lastName;
+      const displayName = req.body.displayName;
       const email = req.body.email;
       const password = req.body.password;
 
-      if (!firstName || !lastName || !email || !password) {
+      if (!displayName || !email || !password) {
         return res.status(400).json({
           message: 'Missing required fields',
         });
@@ -39,8 +39,7 @@ const AuthController = () => {
 
       const user = await prisma.user.create({
         data: {
-          firstName,
-          lastName,
+          displayName,
           email,
           password: hashedPassword,
           avatar: 'random avatar string',
@@ -105,7 +104,17 @@ const AuthController = () => {
       });
     }
   };
-  return { register, login };
+
+  const googleAuthCallback = (req: Request, res: Response) => {
+    const profile: UserJWT = req.user as UserJWT;
+    const tokenObject = issueJWT(profile);
+    return res.status(200).json({
+      message: 'Log in successfull',
+      token: tokenObject.token,
+      expiresIn: tokenObject.expires,
+    });
+  };
+  return { register, login, googleAuthCallback };
 };
 
 export default AuthController;

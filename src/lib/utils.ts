@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { User } from '@prisma/client';
+import { UserJWT } from '../types/users';
 
 dotenv.config();
 
-export const issueJWT = (user: User) => {
+export const issueJWT = (user: UserJWT) => {
   const id = user.id;
   const expireIn = '1d';
 
