@@ -6,11 +6,11 @@ dotenv.config();
 
 export const issueJWT = (user: UserJWT) => {
   const id = user.id;
-  const expireIn = '1d';
+  const expireIn = '24h';
 
   const payload = {
     sub: id,
-    iat: Date.now(),
+    iat: Math.floor(Date.now() / 1000),
   };
 
   const signedToken = jwt.sign(payload, process.env.JWT_SECRET, {

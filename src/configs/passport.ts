@@ -1,6 +1,6 @@
 import { Strategy as JwtStrategy } from 'passport-jwt';
 import { ExtractJwt, WithSecretOrKey } from 'passport-jwt';
-import { Strategy as GoogleStrategy, StrategyOptions } from 'passport-google-oauth20';
+// import { Strategy as GoogleStrategy, StrategyOptions } from 'passport-google-oauth20';
 import { PassportStatic } from 'passport';
 import dotenv from 'dotenv';
 
@@ -13,15 +13,18 @@ const jwtOptions: WithSecretOrKey = {
   secretOrKey: process.env.JWT_SECRET,
 };
 
+/*
 const googleStrategyOptions: StrategyOptions = {
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: 'http://localhost:3000/auth/google/callback',
 };
+*/
 
 export const initializePassport = (passport: PassportStatic) => {
   passport.use(
     new JwtStrategy(jwtOptions, async function (jwt_payload, done) {
+      console.log('we react here even though token has expired');
       try {
         const user = await prisma.user.findUnique({
           where: {
@@ -38,6 +41,8 @@ export const initializePassport = (passport: PassportStatic) => {
       }
     }),
   );
+  //   I drop the idea of using google auth but streatgy will be here for future reference
+  /*
   passport.use(
     new GoogleStrategy(googleStrategyOptions, async function (accessToken, refreshToken, profile, done) {
       try {
@@ -63,4 +68,5 @@ export const initializePassport = (passport: PassportStatic) => {
       }
     }),
   );
+  */
 };

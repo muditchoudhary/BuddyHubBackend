@@ -5,6 +5,7 @@ import passport from 'passport';
 
 import { initializePassport } from './configs/passport';
 import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/users.routes';
 
 dotenv.config();
 
@@ -12,7 +13,12 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_BASE_URL,
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -24,6 +30,7 @@ app.get('/test', (req: Request, res: Response) => {
 });
 
 app.use('/auth', authRoutes);
+app.use('/user', userRoutes);
 
 app.get('/protected', passport.authenticate('jwt', { session: false }), (req, res) => {
   res.status(200).json({

@@ -52,6 +52,14 @@ const AuthController = () => {
           message: 'Registration complete successfully',
           token: tokenObject.token,
           expiresIn: tokenObject.expires,
+          user: {
+            id: user.id,
+            displayName: user.displayName,
+            email: user.email,
+            avatar: user.avatar,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+          },
         });
       }
     } catch (error) {
